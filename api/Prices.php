@@ -1,6 +1,6 @@
 <?php
 
-require_once "../config/Config.php";
+require_once __DIR__ . "/../config/Config.php";
 
 class Prices
 {
@@ -49,7 +49,7 @@ class Prices
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.ges.storagehost.ch/index.php/api/prices',
+            CURLOPT_URL => API_URL . '/api/prices',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,

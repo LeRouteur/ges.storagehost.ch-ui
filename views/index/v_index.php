@@ -65,7 +65,7 @@ include __DIR__ . "/../../includes/include_login.php";
         <h2 class="text-center mb-xl">Panel de gestion</h2>
         <div class="container border-top mt-xl-3">
             <div class="row">
-                <div class="col-md-12 col-8 mt-xl-3 text-left">
+                <div class="col-md-12 text-left mt-3">
                     <h4 class="text-left"><strong>Informations générales</strong></h4>
                     <div class="row">
                         <?= get_income(); ?>
@@ -75,8 +75,6 @@ include __DIR__ . "/../../includes/include_login.php";
         </div>
     </section>
 </main>
-<footer class="footer-orders">
-    <div style="margin-left: 0; width: auto; padding: 0 15px;"><span>© STORAGEHOST - Hosting Services</span></div>
-</footer>
+<?php include(__DIR__ . '/../../includes/footer.php') ?>
 </body>
 </html

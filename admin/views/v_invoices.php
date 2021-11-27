@@ -23,6 +23,9 @@ include __DIR__ . "/../../includes/include_login.php";
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/style.css"/>
+    <script>function redirect(id) {
+            location.href = 'invoice/display/display.php?id=' + id
+        }</script>
     <title>Panel STORAGEHOST - Hosting Services</title>
 </head>
 <body>
@@ -63,13 +66,12 @@ include __DIR__ . "/../../includes/include_login.php";
 <main style="margin-top: 15px;" class="container-fluid text-center bg-light2 mt-xl-3">
     <section class="container">
         <h2 class="text-center mb-xl">Panel de gestion</h2>
-        <div class="container border-top mt-xl-3">
+        <div class="container border-top mt-3">
             <div class="row">
-                <div class="col-md-12 col-8 mt-xl-3 text-left">
+                <div class="col-md-12 text-left mt-3">
                     <h4 class="text-left"><strong>Factures</strong></h4>
-                    <?= get_message(); ?>
                     <div class="row">
-                        <?= get_prices(); ?>
+                        <?= get_invoices(); ?>
                     </div>
                 </div>
             </div>
@@ -77,4 +79,5 @@ include __DIR__ . "/../../includes/include_login.php";
     </section>
 </main>
 </body>
-</html
+<?php include(__DIR__ . '/../../includes/footer.php') ?>
+</html>

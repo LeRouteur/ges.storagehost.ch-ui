@@ -11,7 +11,7 @@ function get_students()
 
     if ($students['http_code'] == 200 && $students['data']->message !== "no_students") {
         foreach ($students['data']->data as $student) {
-            echo "<div class='col-md-12 col-sm-12 text-left boxes mt-xl-2 mb-3'>
+            echo "<div class='col-md-12 col-sm-12 text-left boxes mt-xl-2'>
                       <div class='row'>
                           <div class='col-1'>
                               <strong>ID :</strong> " . $student->id . "<br />

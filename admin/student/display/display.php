@@ -4,6 +4,8 @@ session_start();
 
 require_once __DIR__ . "/../../../api/Students.php";
 
+global $student_id;
+
 function get_message()
 {
     if (isset($_GET['status'])) {
@@ -19,19 +21,27 @@ function get_students()
 {
     if (isset($_GET['id'])) {
         $student = (new Students($_SESSION['token']))->get_student_by_id($_GET['id']);
+        $lessons = (new Students($_SESSION['token']))->get_student_lessons_by_id($_GET['id']);
 
         if ($student['http_code'] == 200 && !isset($student['data']->message)) {
-            if ($student['data']->message !== "no_students") {
+            if ($student['data']->message == "no_students") {
+                echo "<p class='text-left'>Il n'y a pas d'élève enregistré dans le système.</p>";
+            } else {
+                global $student_id;
                 $student = $student['data']->data;
-                echo "<div class='col-md-12 col-sm-12 text-left boxes mt-xl-2'>
+
+                $student_id = $student->id;
+
+                echo "<div class='col-12 text-left boxes mt-xl-2'>
     <form class='mt-xl-3' method='post' action='../modify/modify.php'>
         <div class='row'>
             <div class='col-md-6 col-sm-12 mb-3'>
                 <strong>ID :</strong> " . $student->id . "<br />
             </div>
 
-            <div class='col-6'>
-                <button class='btn btn-danger float-right mb-3 ml-2' type='button'>Supprimer l'élève</button>
+            <div class='col-md-6 col-sm-12'>
+                <button class='btn btn-info float-right ml-2' type='button' onclick='newInvoice($student->id)'>Nouvelle facture</button>
+                <button class='btn btn-danger float-right mb-3 ml-2' type='button' onclick='deleteStudent($student->id)'>Supprimer l'élève</button>
                 <button class='btn btn-primary float-right mb-3' type='submit'>Mettre à jour</button>
             </div>
         </div>
@@ -164,22 +174,69 @@ function get_students()
                 <input type='date' class='form-control mb-2' name='exam_dates[]' value='" . $student->{'1st_date'} . "'>
                   <input type='date' class='form-control mb-2' name='exam_dates[]' value='" . $student->{'2nd_date'} . "'>
                 <input type='date' class='form-control' name='exam_dates[]' value='" . $student->{'3rd_date'} . "'>
-          </div>
-                                                                                                                            
+            </div>                                                                                                    
         </div>
+      </form>
+      <form class='mt-xl-3' method='post' action='../modify/modify_lessons.php'>
+      <hr style='margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, 0.1);'/>
+            " . get_lessons($lessons) . "
       </form>
       " . set_categories_holder($student->categories_holder) . "
       </div>
       </div>
       </div>";
-            } else {
-                echo "<p class='text-left'>Il n'y a pas d'élève enregistré dans le système.</p>";
             }
         }
+
     } else {
         header('Location: ' . UI_URL . 'admin/students.php');
     }
+}
 
+function get_lesson_status() {
+    if (isset($_GET['message'])) {
+        if ($_GET['message'] == 'lesson_added') {
+            return "<p class='text-success'>La/les leçon(s) ont bien été ajoutée(s)/modifiée(s).</p>";
+        }
+    }
+}
+
+function get_lessons($lessons)
+{
+    global $student_id;
+
+    $result = "<div class='form-group col-12' id='lessons'>
+                   <button class='btn btn-info float-right' type='button' onclick='addLesson(" . $student_id . ")'>Ajouter une leçon</button>
+                   <button class='btn btn-primary float-right mr-2' type='submit'>Mettre à jour</button>
+                   <label><strong>Leçons :</strong></label>
+                   " . get_lesson_status();
+    if (isset($lessons['data']->message)) {
+        if ($lessons['data']->message == 'no_lessons') {
+            $result .= "<p>Il n'y a pas de leçons pour cet élève.</p>";
+        }
+    } else {
+        foreach ($lessons['data']->data as $lesson) {
+            $lesson->date = date('Y-m-d', strtotime($lesson->date));
+            $result .= "<div class='row mt-3'>
+                        <input type='hidden' name='student_id' value='" . $student_id . "'>
+                        <div class='col-md-4 col-sm-12 mb-2'>
+                            <label>ID de la leçon :</label>
+                            <input type='number' class='form-control' name='lesson_id[]' value='" . $lesson->lesson_id . "' readonly required>
+                        </div>
+                        <div class='col-md-4 col-sm-12 mb-2'>
+                            <label>Date :</label>
+                            <input type='date' class='form-control' name='date[]' value='" . $lesson->date . "' required>
+                        </div>
+                        <div class='col-md-4 col-sm-12'>
+                            <label>Détails :</label>                        
+                            <textarea class='form-control' name='lesson_detail[]' placeholder='Commentaire...'>" . $lesson->details . "</textarea>
+                        </div>
+                    </div>";
+        }
+    }
+
+    $result .= "</div>";
+    return $result;
 }
 
 function get_category($category): string

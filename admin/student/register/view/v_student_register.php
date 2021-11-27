@@ -63,9 +63,9 @@ include __DIR__ . "/../../../../includes/include_login.php";
 <main style="margin-top: 15px;" class="container-fluid text-center bg-light2 mt-xl-3">
     <section class="container">
         <h2 class="text-center mb-xl">Panel de gestion</h2>
-        <div class="container border-top mt-xl-3">
+        <div class="container border-top mt-3">
             <div class="row">
-                <div class="col-md-12 col-8 mt-xl-3 text-left">
+                <div class="col-md-12 mt-3 text-left">
                     <h4 class="text-left"><strong>Nouvel élève</strong></h4>
                     <?= get_message(); ?>
                     <div class="row mt-3 mb-3">
@@ -85,12 +85,15 @@ include __DIR__ . "/../../../../includes/include_login.php";
                                     <div class='form-group col-md-4 col-sm-12'>
                                         <label for="sln">N° de permis d'élève :</label>
                                         <input id='sln' type='number' class='form-control' name='student_license_number'
-                                               placeholder="XXXXXXX" minlength="7" maxlength="7" required>
+                                               placeholder="XXXXXXX" minlength="7" maxlength="7"
+                                               value="<?php echo isset($_POST['student_license_number']) ? $_POST['student_license_number'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-4 col-sm-12'>
                                         <label for="validity">Validité :</label>
                                         <input id='validity' type='date' class='form-control' name='validity'
+                                               value="<?php echo isset($_POST['validity']) ? $_POST['validity'] : '' ?>"
                                                required>
                                     </div>
 
@@ -98,50 +101,68 @@ include __DIR__ . "/../../../../includes/include_login.php";
                                         <label for="phone">Téléphone :</label>
                                         <input id='phone' type='tel' class='form-control' name='phone'
                                                placeholder="0XXXXXXXXX"
+                                               value="<?php echo isset($_POST['phone']) ? $_POST['phone'] : '' ?>"
                                                required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="last_name">Nom :</label>
                                         <input id='last_name' type='text' class='form-control' name='last_name'
-                                               placeholder="Doe" required>
+                                               placeholder="Doe"
+                                               value="<?php echo isset($_POST['last_name']) ? $_POST['last_name'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="first_name">Prénom :</label>
                                         <input id='first_name' type='text' class='form-control' name='first_name'
-                                               placeholder="John" required>
+                                               placeholder="John"
+                                               value="<?php echo isset($_POST['first_name']) ? $_POST['first_name'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="email">Email :</label>
                                         <input id='email' type='email' class='form-control' name='email'
-                                               placeholder="john.doe@example.com">
+                                               placeholder="john.doe@example.com"
+                                               value="<?php echo isset($_POST['email']) ? $_POST['email'] : '' ?>">
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="date_of_birth">Date de naissance :</label>
-                                        <input id='date_of_birth' type='date' class='form-control' name='date_of_birth' required>
+                                        <input id='date_of_birth' type='date' class='form-control' name='date_of_birth'
+                                               value="<?php echo isset($_POST['date_of_birth']) ? $_POST['date_of_birth'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="address">Addresse :</label>
-                                        <input id='address' type='text' class='form-control' name='address' placeholder="Rue du Centre 1" required>
+                                        <input id='address' type='text' class='form-control' name='address'
+                                               placeholder="Rue du Centre 1"
+                                               value="<?php echo isset($_POST['address']) ? $_POST['address'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="postal_code">Code postal :</label>
-                                        <input id='postal_code' type='text' class='form-control' name='postal_code' placeholder="1234" required>
+                                        <input id='postal_code' type='text' class='form-control' name='postal_code'
+                                               placeholder="1234"
+                                               value="<?php echo isset($_POST['postal_code']) ? $_POST['postal_code'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="city">Ville :</label>
-                                        <input id='city' type='text' class='form-control' name='city' placeholder="Pofadder" required>
+                                        <input id='city' type='text' class='form-control' name='city'
+                                               placeholder="Pofadder"
+                                               value="<?php echo isset($_POST['city']) ? $_POST['city'] : '' ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="job">Métier :</label>
-                                        <input id="job" type='text' class='form-control' name='job'>
+                                        <input id="job" type='text' class='form-control' name='job'
+                                               value="<?php echo isset($_POST['job']) ? $_POST['job'] : '' ?>">
                                     </div>
 
                                     <div class='form-group col-md-4 col-sm-12'>

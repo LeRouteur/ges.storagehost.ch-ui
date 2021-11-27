@@ -1,5 +1,5 @@
 <?php
 
 if (empty($_SESSION)) {
-    header('Location: http://localhost/login.php');
+    header('Location: http://dev.ges.ui.ch/login.php');
 }

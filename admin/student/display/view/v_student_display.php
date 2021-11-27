@@ -13,10 +13,29 @@ include __DIR__ . "/../../../../includes/include_login.php";
     <link rel="icon" type="image/png" href="../../assets/images/favicon.ico"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+            integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../../../css/style.css"/>
+    <script>
+        function deleteStudent(id) {
+            location.href = '/admin/student/delete/delete.php?id=' + id
+        }
+
+        function newInvoice(id) {
+            location.href = '/admin/invoice/create/create.php?id=' + id
+        }
+
+        function addLesson(student_id) {
+            $('#lessons').append("<div class='row mt-3'><input type='hidden' name='student_id' value='" + student_id + "'><div class='col-md-6 col-sm-12 mb-2'><label>Date :</label><input type='date' class='form-control' name='date[]' required> </div><div class='col-md-6 col-sm-12'><label>Détails :</label><textarea class='form-control' name='lesson_detail[]' placeholder='Commentaire...'></textarea></div></div>");
+        }
+    </script>
     <title>Panel STORAGEHOST - Hosting Services</title>
 </head>
 <body>
@@ -47,9 +66,7 @@ include __DIR__ . "/../../../../includes/include_login.php";
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0" action="../../../logout.php">
-                <p style="margin-bottom: 0; margin-right: 8px;" class="mr-sm-2">
-
-                    <button class="btn btn-danger my-2 my-sm-0" type="submit">Déconnexion</button>
+                <button class="btn btn-danger my-2 my-sm-0" type="submit">Déconnexion</button>
             </form>
         </div>
     </nav>
@@ -57,9 +74,9 @@ include __DIR__ . "/../../../../includes/include_login.php";
 <main style="margin-top: 15px;" class="container-fluid text-center bg-light2 mt-xl-3">
     <section class="container">
         <h2 class="text-center mb-xl">Panel de gestion</h2>
-        <div class="container border-top mt-xl-3">
+        <div class="container border-top mt-3">
             <div class="row">
-                <div class="col-md-12 col-8 mt-xl-3 text-left">
+                <div class="col-md-12 mt-3 text-left">
                     <h4 class="text-left"><strong>Élève</strong></h4>
                     <?= get_message(); ?>
                     <div class="row mt-3 mb-3">

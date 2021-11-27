@@ -60,12 +60,12 @@ include __DIR__ . "/../../includes/include_login.php";
         </div>
     </nav>
 </header>
-<main style="margin-top: 15px;" class="container-fluid text-center bg-light2 mt-xl-3">
+<main style="margin-top: 15px;" class="container-fluid text-center bg-light2 mt-3">
     <section class="container">
         <h2 class="text-center mb-xl">Panel de gestion</h2>
-        <div class="container border-top mt-xl-3">
+        <div class="container border-top mt-3">
             <div class="row">
-                <div class="col-md-12 col-8 mt-xl-3 text-left">
+                <div class="col-md-12 text-left mt-3">
                     <h4 class="text-left"><strong>Liste des prix</strong></h4>
                     <?= get_message(); ?>
                     <div class="row">
@@ -77,4 +77,5 @@ include __DIR__ . "/../../includes/include_login.php";
     </section>
 </main>
 </body>
-</html
+<?php include(__DIR__ . '/../../includes/footer.php') ?>
+</html>

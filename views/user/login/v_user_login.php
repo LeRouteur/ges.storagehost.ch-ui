@@ -52,11 +52,11 @@ use function User\Login\getError;
 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Connexion</button>
 
-    <p class="mt-md-3 text-center"><a href="forgot_password.php">Mot de passe oublié ?</a></p>
+    <p class="mt-3 text-center"><a href="forgot_password.php">Mot de passe oublié ?</a></p>
 
-    <p class="mt-md-3 text-center">Pas encore de compte ? <a href="register.php">Inscrivez-vous !</a></p>
+    <p class="mt-3 text-center">Pas encore de compte ? <a href="register.php">Inscrivez-vous !</a></p>
 
-    <p class="mt-5 mb-3 text-muted">&copy; 2021 STORAGEHOST - Hosting Services</p>
+    <p class="mt-5 text-muted">&copy; 2021 STORAGEHOST - Hosting Services</p>
 </form>
 </body>
 </html>
