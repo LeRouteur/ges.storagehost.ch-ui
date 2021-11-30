@@ -91,20 +91,7 @@
                                     </div>
 
                                     <div class='form-group col-md-6 col-sm-12'>
-                                        <label for='category'>Catégorie :</label>
-                                        <select class='form-control' name='category' id='category' required>
-                                            <option value='' selected disabled hidden>Choisissez la catégorie...
-                                            </option>
-                                            <option value='A/A1/A35'>A/A1/A35</option>
-                                            <option value='B'>B</option>
-                                            <option value='C'>C</option>
-                                            <option value='C1/D1'>C1/D1</option>
-                                            <option value='D'>D</option>
-                                            <option value='BE'>BE</option>
-                                            <option value='CE'>CE</option>
-                                            <option value='OACP'>OACP</option>
-                                            <option value='TPP121/122'>TPP121/122</option>
-                                        </select>
+                                        <?= get_category() ?>
                                     </div>
 
                                     <div class='form-group col-md-2 col-sm-12'>
@@ -117,7 +104,7 @@
                                     <div class='form-group col-md-2 col-sm-12'>
                                         <label for="last_name">Leçons :</label>
                                         <input id='last_name' type='number' class='form-control' name='lesson' min="0"
-                                               value="<?php echo isset($_POST['lesson']) ? $_POST['lesson'] : '' ?>"
+                                               value="<?php echo isset($_POST['lesson']) ? $_POST['lesson'] : get_lesson_number() ?>"
                                                required>
                                     </div>
 
@@ -131,7 +118,8 @@
                                     <div class='form-group col-md-3 col-sm-12'>
                                         <label for="email">OACP :</label>
                                         <input id='email' type='number' class='form-control' name='oacp' min="0"
-                                               value="<?php echo isset($_POST['oacp']) ? $_POST['oacp'] : 0 ?>" required>
+                                               value="<?php echo isset($_POST['oacp']) ? $_POST['oacp'] : 0 ?>"
+                                               required>
                                     </div>
 
                                     <div class='form-group col-md-3 col-sm-12'>

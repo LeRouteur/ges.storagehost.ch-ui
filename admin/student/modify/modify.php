@@ -9,6 +9,7 @@ update_student();
 function update_student()
 {
     if (!empty($_POST)) {
+        var_dump($_POST);
         if (!empty($_POST['id']) && !empty($_POST['student_license_number']) && !empty($_POST['validity']) && !empty($_POST['last_name']) && !empty($_POST['first_name']) && !empty($_POST['address']) && !empty($_POST['postal_code']) && !empty($_POST['city']) && !empty($_POST['date_of_birth']) && !empty($_POST['category'])) {
             $email = "";
 
@@ -53,12 +54,13 @@ function update_student()
                 $data['categories_holder'] = $categories_holder;
             }
 
-            //TODO: add possibility to remove the exam date from the UI
-
             $modify = (new Students($_SESSION['token']))->modify_student_by_id($_POST['id'], $data);
 
             if ($modify['http_code'] == 200 && $modify['data']->status == 'success') {
-                header('Location: ' . UI_URL . 'admin/student/display/display.php?id=' . $modify['data']->data->student_id . '&status=success');
+                header('Location: ' . UI_URL . 'admin/student/display/display.php?id=' . $modify['data']->data->student_id . '&status=success&message=student_modified');
+            } elseif ($modify['http_code'] == 401) {
+                // redirect to login
+                header('Location: ' . UI_URL . 'admin/students.php');
             }
         } else {
             return "bad_post";

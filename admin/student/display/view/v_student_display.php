@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . "/../../../../includes/UserInfo.php";
-include __DIR__ . "/../../../../includes/include_login.php";
 
 ?>
 
@@ -33,7 +32,15 @@ include __DIR__ . "/../../../../includes/include_login.php";
         }
 
         function addLesson(student_id) {
-            $('#lessons').append("<div class='row mt-3'><input type='hidden' name='student_id' value='" + student_id + "'><div class='col-md-6 col-sm-12 mb-2'><label>Date :</label><input type='date' class='form-control' name='date[]' required> </div><div class='col-md-6 col-sm-12'><label>Détails :</label><textarea class='form-control' name='lesson_detail[]' placeholder='Commentaire...'></textarea></div></div>");
+            $('#lessons').append("<div class='row mt-3'><input type='hidden' name='student_id' value='" + student_id + "'><div class='col-md-3 col-sm-12 mb-2'><label>Date :</label><input type='date' class='form-control' name='date[]' required> </div><div class='col-md-3 col-sm-12 mb-2'><label>Durée :</label><input type='time' list='lesson_duration' class='form-control' name='lesson_duration[]' required></div><div class='col-md-3 col-sm-12 mb-2'> <label>Commentaires élève :</label><textarea class='form-control' name='student_comment[]' placeholder='Commentaire...'></textarea></div><div class='col-md-3 col-sm-12'><label>Commentaires moniteur :</label><textarea class='form-control' name='teacher_comment[]' placeholder='Commentaire...'></textarea></div></div>");
+        }
+
+        function printDetailSheet(data) {
+            location.href = '/admin/detail_sheet/add_data.php?data=' + data
+        }
+
+        function sendDetailSheetByEmail(data) {
+            location.href = '/admin/detail_sheet/send_email.php?data=' + data
         }
     </script>
     <title>Panel STORAGEHOST - Hosting Services</title>
@@ -80,7 +87,7 @@ include __DIR__ . "/../../../../includes/include_login.php";
                     <h4 class="text-left"><strong>Élève</strong></h4>
                     <?= get_message(); ?>
                     <div class="row mt-3 mb-3">
-                        <?= get_students(); ?>
+                        <?= get_student(); ?>
                     </div>
                 </div>
             </div>

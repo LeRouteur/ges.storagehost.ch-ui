@@ -3,6 +3,7 @@
 session_start();
 
 require_once __DIR__ . "/../../../api/Students.php";
+require_once __DIR__ . "/../../../api/Users.php";
 
 global $student_id;
 
@@ -10,23 +11,21 @@ function get_message()
 {
     if (isset($_GET['status'])) {
         $status = $_GET['status'];
-        if ($status == 'success') {
+        if ($status == 'success' && $_GET['message'] == 'student_modified') {
             return "<p class='text-success'>L'élève a bien été modifié.</p>";
         }
     }
 }
 
 // get the students list
-function get_students()
+function get_student()
 {
     if (isset($_GET['id'])) {
         $student = (new Students($_SESSION['token']))->get_student_by_id($_GET['id']);
         $lessons = (new Students($_SESSION['token']))->get_student_lessons_by_id($_GET['id']);
 
-        if ($student['http_code'] == 200 && !isset($student['data']->message)) {
-            if ($student['data']->message == "no_students") {
-                echo "<p class='text-left'>Il n'y a pas d'élève enregistré dans le système.</p>";
-            } else {
+        if ($student['http_code'] == 200) {
+            if (!isset($student['data']->message)) {
                 global $student_id;
                 $student = $student['data']->data;
 
@@ -179,13 +178,28 @@ function get_students()
       </form>
       <form class='mt-xl-3' method='post' action='../modify/modify_lessons.php'>
       <hr style='margin-top: 1rem; margin-bottom: 1rem; border: 0; border-top: 1px solid rgba(0, 0, 0, 0.1);'/>
+      <datalist id='lesson_duration'>
+          <option value='00:30'>
+          <option value='01:00'>
+          <option value='01:30'>
+          <option value='02:00'>
+          <option value='02:30'>
+          <option value='03:00'>
+          <option value='03:30'>
+          <option value='04:00'>       
+      </datalist>
             " . get_lessons($lessons) . "
       </form>
       " . set_categories_holder($student->categories_holder) . "
       </div>
       </div>
       </div>";
+            } else {
+                echo "<p class='text-left'>Il n'y a pas d'élève enregistré dans le système.</p>";
             }
+        } elseif ($student['http_code'] == 401) {
+            // redirect to login
+            header('Location: ' . UI_URL . 'admin/students.php');
         }
 
     } else {
@@ -193,11 +207,43 @@ function get_students()
     }
 }
 
-function get_lesson_status() {
+function get_email_string()
+{
+    global $student_id;
+
+    // get the user data
+    $user = (new Users())->get_user_info($_SESSION['token']);
+    $email = $user['data']->data->email;
+
+    $link = "";
+    if (isset($_GET['link'])) {
+        $link = urldecode($_GET['link']);
+    }
+
+    // get get the invoice name from the link
+    $result = explode("/", $link);
+
+    // link!detail-sheet-name!user-email!student-id
+    return $link . "!" . $result[6] . "!" . $email . "!" . $student_id;
+}
+
+
+function get_lesson_status()
+{
     if (isset($_GET['message'])) {
         if ($_GET['message'] == 'lesson_added') {
             return "<p class='text-success'>La/les leçon(s) ont bien été ajoutée(s)/modifiée(s).</p>";
+        } elseif ($_GET['message'] == 'detail_sheet_printed') {
+            return "<p class='text-success'>La feuille de détails a bien été générée en PDF. <a target='_blank' href='" . urldecode($_GET['link']) . "'>Télécharger le PDF ici.</a></p>";
+        } elseif ($_GET['message'] == 'email_sent') {
+            return "<p class='text-success'>L'email a bien été envoyé. <a target='_blank' href='" . urldecode($_GET['link']) . "'>Télécharger le PDF ici.</a></p>";
         }
+    }
+}
+
+function get_send_by_mail_button() {
+    if (isset($_GET['link'])) {
+        return "<button class='btn btn-info float-right mr-2' type='button' onclick='sendDetailSheetByEmail(\"" . base64_encode(get_email_string()) . "\")'>Envoyer le PDF par email</button>";
     }
 }
 
@@ -206,10 +252,19 @@ function get_lessons($lessons)
     global $student_id;
 
     $result = "<div class='form-group col-12' id='lessons'>
-                   <button class='btn btn-info float-right' type='button' onclick='addLesson(" . $student_id . ")'>Ajouter une leçon</button>
-                   <button class='btn btn-primary float-right mr-2' type='submit'>Mettre à jour</button>
-                   <label><strong>Leçons :</strong></label>
-                   " . get_lesson_status();
+                   <div class='row'>
+                       <div class='col-md-3 col-sm-12 float-left'>
+                           <label><strong>Leçons :</strong></label>
+                           " . get_lesson_status() . "
+                       </div>   
+                       <div class='col-md-9 col-sm-12 float-right'>
+                           <button class='btn btn-secondary float-right' type='button' onclick='addLesson(" . $student_id . ")'>Ajouter une leçon</button>
+                           <button class='btn btn-primary float-right mr-2' type='submit'>Mettre à jour</button>
+                           <button class='btn btn-info float-right mr-2' type='button' onclick='printDetailSheet(" . $student_id . ")'>Nouvelle fiche de détail</button>
+                           " . get_send_by_mail_button() . "
+                       </div>           
+                   </div>
+                   ";
     if (isset($lessons['data']->message)) {
         if ($lessons['data']->message == 'no_lessons') {
             $result .= "<p>Il n'y a pas de leçons pour cet élève.</p>";
@@ -219,17 +274,22 @@ function get_lessons($lessons)
             $lesson->date = date('Y-m-d', strtotime($lesson->date));
             $result .= "<div class='row mt-3'>
                         <input type='hidden' name='student_id' value='" . $student_id . "'>
-                        <div class='col-md-4 col-sm-12 mb-2'>
-                            <label>ID de la leçon :</label>
-                            <input type='number' class='form-control' name='lesson_id[]' value='" . $lesson->lesson_id . "' readonly required>
-                        </div>
-                        <div class='col-md-4 col-sm-12 mb-2'>
+                        <input type='hidden' class='form-control' name='lesson_id[]' value='" . $lesson->lesson_id . "' required>
+                        <div class='col-md-3 col-sm-12 mb-2'>
                             <label>Date :</label>
                             <input type='date' class='form-control' name='date[]' value='" . $lesson->date . "' required>
                         </div>
-                        <div class='col-md-4 col-sm-12'>
-                            <label>Détails :</label>                        
-                            <textarea class='form-control' name='lesson_detail[]' placeholder='Commentaire...'>" . $lesson->details . "</textarea>
+                        <div class='col-md-3 col-sm-12 mb-2'>
+                            <label>Durée :</label>
+                            <input type='time' list='lesson_duration' class='form-control' name='lesson_duration[]' value='" . $lesson->duration . "' required>
+                        </div>
+                        <div class='col-md-3 col-sm-12 mb-2'>
+                            <label>Commentaires élève :</label>                        
+                            <textarea class='form-control' name='student_comment[]' placeholder='Commentaire...'>" . $lesson->student_comment . "</textarea>
+                        </div>
+                        <div class='col-md-3 col-sm-12'>
+                            <label>Commentaires moniteur :</label>                        
+                            <textarea class='form-control' name='teacher_comment[]' placeholder='Commentaire...'>" . $lesson->teacher_comment . "</textarea>
                         </div>
                     </div>";
         }
@@ -255,7 +315,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "B":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -266,7 +327,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "C":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -277,7 +339,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "C1/D1":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -288,7 +351,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "D":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -299,7 +363,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "BE":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -310,7 +375,8 @@ function get_category($category): string
 <option value='BE' selected>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "CE":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -321,7 +387,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE' selected>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "OACP":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -332,7 +399,8 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP' selected>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
         case "TPP121/122":
             $result .= "<option value='A/A1/A35'>A/A1/A35</option>
@@ -343,8 +411,20 @@ function get_category($category): string
 <option value='BE'>BE</option>    
 <option value='CE'>CE</option>
 <option value='OACP'>OACP</option>
-<option value='TPP121/122'>TPP121/122</option>";
+<option value='TPP121/122' selected>TPP121/122</option>
+<option value='theory'>Théorie</option>";
             break;
+        case "THEORY":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory' selected>Théorie</option>";
 
     }
 

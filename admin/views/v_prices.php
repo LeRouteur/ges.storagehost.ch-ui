@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . "/../../includes/UserInfo.php";
-include __DIR__ . "/../../includes/include_login.php";
 
 ?>
 

@@ -36,6 +36,9 @@ function update_invoice()
 
             if ($invoice['http_code'] == 200 && $invoice['data']->status == 'success') {
                 header('Location: ' . UI_URL . 'admin/invoice/display/display.php?id=' . $invoice['data']->data->id . '&status=success');
+            } elseif ($invoice['http_code'] == 401) {
+                // redirect to login
+                header('Location: ' . UI_URL . 'admin/invoices.php');
             }
         } else {
             return "bad_post";

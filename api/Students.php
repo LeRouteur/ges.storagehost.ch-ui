@@ -228,7 +228,7 @@ class Students
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'dev.ges.api.ch/api/lesson/modify',
+            CURLOPT_URL => API_URL . '/api/lesson/modify',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -264,7 +264,7 @@ class Students
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'dev.ges.api.ch/api/lessons',
+            CURLOPT_URL => API_URL . '/api/lessons',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -276,6 +276,41 @@ class Students
             CURLOPT_HTTPHEADER => array(
                 'Authorization: Bearer ' . $this->token,
                 'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        $time = curl_getinfo($curl, CURLINFO_TOTAL_TIME);
+
+        curl_close($curl);
+
+        return array(
+            'http_code' => $http_code,
+            'time' => $time,
+            'data' => json_decode($response)
+        );
+    }
+
+    // POST /api/student/lessons/send
+    public function send_detail_sheet_by_mail(array $data)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => API_URL . '/api/lessons/send',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $this->token
             ),
         ));
 

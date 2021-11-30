@@ -17,6 +17,9 @@ function delete_student()
 
         if ($delete['http_code'] == 204) {
             header('Location: ' . UI_URL . 'admin/invoices.php');
+        } elseif ($delete['http_code'] == 401) {
+            // redirect to login
+            header('Location: ' . UI_URL . 'admin/delete.php');
         }
     }
 }

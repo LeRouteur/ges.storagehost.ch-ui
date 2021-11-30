@@ -41,6 +41,9 @@ function get_invoices()
                     </div>
                  </div>";
         }
+    } elseif ($invoices['http_code'] == 401) {
+        // redirect to login
+        header('Location: ' . UI_URL . 'login.php?error=session_expired');
     } else {
         return "<p>Il n'y a pas de factures enregistrées dans le système.</p>";
     }

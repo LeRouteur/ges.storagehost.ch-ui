@@ -3,6 +3,7 @@
 session_start();
 
 require_once __DIR__ . '/../../../api/Invoices.php';
+require_once __DIR__ . '/../../../api/Students.php';
 
 global $error;
 
@@ -35,6 +36,9 @@ function get_form_data()
                 header('Location: ' . UI_URL . 'admin/invoice/display/display.php?id=' . $invoice['data']->data->id . "&status=success&message=invoice_created");
             } elseif ($invoice['http_code'] == 400 && $invoice['data']->message == "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '30' for key 'invoices_user_id_uindex'") {
                 header('Location: ' . UI_URL . 'admin/invoice/create/create.php?id=' . $data['id'] . "&status=error&message=duplicate_invoice");
+            } elseif ($invoice['http_code'] == 401) {
+                // redirect to login
+                header('Location: ' . UI_URL . 'admin/invoices.php');
             } else {
                 $error = "<p class='text-danger'>" . $invoice['data']->message . "</p>";
             }
@@ -56,6 +60,146 @@ function get_message()
             return "<p class='text-success'>La facture a bien été créée.</p>";
         }
     }
+}
+
+function get_category()
+{
+    $category = (new Students($_SESSION['token']))->get_student_by_id($_GET['id'])['data']->data->category;
+
+    $result = "<label for='category'>Catégorie :</label>
+                   <select class='form-control' name='category' id='category' required>
+                       <option value='' selected disabled hidden>Choisissez la catégorie...</option>";
+
+    switch ($category) {
+        case "A/A1/A35":
+            $result .= "<option value='A/A1/A35' selected>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "B":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B' selected>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "C":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C' selected>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "C1/D1":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1' selected>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "D":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D' selected>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "BE":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE' selected>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "CE":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE' selected>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "OACP":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP' selected>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "TPP121/122":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122' selected>TPP121/122</option>
+<option value='theory'>Théorie</option>";
+            break;
+        case "THEORY":
+            $result .= "<option value='A/A1/A35'>A/A1/A35</option>
+<option value='B'>B</option>
+<option value='C'>C</option>
+<option value='C1/D1'>C1/D1</option>
+<option value='D'>D</option>
+<option value='BE'>BE</option>    
+<option value='CE'>CE</option>
+<option value='OACP'>OACP</option>
+<option value='TPP121/122'>TPP121/122</option>
+<option value='theory' selected>Théorie</option>";
+
+    }
+
+    return $result .= "</select>";
+}
+
+function get_lesson_number()
+{
+    return count((new Students($_SESSION['token']))->get_student_lessons_by_id($_GET['id'])['data']->data);
+
 }
 
 require_once __DIR__ . "/view/v_invoice_create.php";

@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . "/../../../../includes/UserInfo.php";
-include __DIR__ . "/../../../../includes/include_login.php";
 
 ?>
 
@@ -179,6 +178,7 @@ include __DIR__ . "/../../../../includes/include_login.php";
                                             <option value='CE'>CE</option>
                                             <option value='OACP'>OACP</option>
                                             <option value='TPP121/122'>TPP121/122</option>
+                                            <option value='theory'>Théorie</option>
                                         </select>
                                     </div>
 

@@ -22,6 +22,9 @@ if (!empty($_GET['data'])) {
 
     if ($mail['http_code'] == 204) {
         header('Location: ' . UI_URL . 'admin/invoice/display/display.php?id=' . $data['id'] . '&status=success&message=email_sent&link=' . urlencode($data['link']));
+    } elseif ($mail['http_code'] == 401) {
+        // redirect to login
+        header('Location: ' . UI_URL . 'admin/invoices.php');
     }
 
 } else {

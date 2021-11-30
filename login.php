@@ -52,7 +52,8 @@ function getError(): string
     if ($error) {
         return "<p id=\"error\" class=\"text-danger\">$error</p>";
     } elseif (!empty($_GET['error'])) {
-        return "<p id=\"error\" class=\"text-danger\">Votre session a expiré. Reconnectez-vous.</p>";
+        session_destroy();
+        return "<p class=\"text-danger\">Votre session a expiré. Reconnectez-vous.</p>";
     } else {
         return "";
     }

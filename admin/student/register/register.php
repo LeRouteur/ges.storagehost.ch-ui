@@ -64,8 +64,9 @@ function get_form_data()
             } elseif ($register['http_code'] == 400 && $register['data']->message == 'user_already_exists') {
                 // user already exists, print an error message
                 $error = "<p class='text-danger'>L'élève est déjà enregistré dans le système.</p>";
-            } elseif ($register['http_code'] == 401 && $register['data']->message == 'unauthorized') {
-                header("Location: " . UI_URL . "login.php");
+            }  elseif ($register['http_code'] == 401) {
+                // redirect to login
+                header('Location: ' . UI_URL . 'admin/students.php');
             } else {
                 $error = "<p class='text-danger'>" . $register['data']->message . "</p>";
             }

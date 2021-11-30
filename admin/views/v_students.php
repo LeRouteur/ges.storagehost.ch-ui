@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . "/../../includes/UserInfo.php";
-include __DIR__ . "/../../includes/include_login.php";
 
 ?>
 
@@ -46,7 +45,7 @@ include __DIR__ . "/../../includes/include_login.php";
                     <a class="nav-link" href="../index.php">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active"" href="#">Liste des élèves</a>
+                    <a class="nav-link active" href="students.php">Liste des élèves</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="invoices.php">Factures</a>

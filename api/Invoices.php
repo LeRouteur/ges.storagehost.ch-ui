@@ -84,7 +84,7 @@ class Invoices
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'dev.ges.api.ch/api/invoices',
+            CURLOPT_URL => API_URL . '/api/invoices',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -182,6 +182,7 @@ class Invoices
         );
     }
 
+    // POST /api/invoice/send
     public function send_invoice_by_mail(array $data)
     {
         $curl = curl_init();

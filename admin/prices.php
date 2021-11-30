@@ -49,8 +49,9 @@ function get_prices()
             echo "</div>";
 
         }
-    } else if ($prices['http_code'] == 401) {
-        session_destroy();
+    } elseif ($prices['http_code'] == 401) {
+        // redirect to login
+        header('Location: ' . UI_URL . 'login.php?error=session_expired');
     } else {
         echo "<p class='text-left'>Il n'y a pas de prix enregistré dans le système.</p>";
     }

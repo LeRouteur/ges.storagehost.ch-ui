@@ -64,6 +64,9 @@ function get_invoice_by_id($id)
 
     if ($invoice['http_code'] == 200) {
         return $invoice['data']->data;
+    } elseif ($invoice['http_code'] == 401) {
+        // redirect to login
+        header('Location: ' . UI_URL . 'login.php?error=session_expired');
     } else {
         header('Location: ' . UI_URL . 'index.php');
     }
@@ -234,7 +237,7 @@ function get_message()
                 return "<p class='text-success'>La facture a bien été créée.</p>";
             } elseif ($_GET['message'] == 'pdf_printed') {
                 return "<p class='text-success'>La facture a bien été générée en PDF. <a target='_blank' href='" . urldecode($_GET['link']) . "'>Télécharger le PDF ici.</a></p>";
-            } elseif ($_GET['message'] = 'email_send') {
+            } elseif ($_GET['message'] = 'email_sent') {
                 return "<p class='text-success'>L'email a bien été envoyé. <a target='_blank' href='" . urldecode($_GET['link']) . "'>Télécharger le PDF ici.</a></p>";
             }
         } else {
@@ -242,6 +245,8 @@ function get_message()
         }
     }
 }
+
+if ($data['category'] == "THEORY") $data['category'] = "Théorie";
 
 $html = "<!DOCTYPE html>
 <html lang='en'>
