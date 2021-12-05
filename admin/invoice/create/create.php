@@ -23,7 +23,7 @@ function get_form_data()
                 'id' => $_POST['student_id'],
                 'category' => $_POST['category'],
                 'casco' => $_POST['casco'],
-                'lesson' => $_POST['lesson'],
+                'lesson' => str_replace(",", ".", $_POST['lesson']),
                 'exam' => $_POST['exam'],
                 'oacp' => $_POST['oacp'],
                 'theorical_lesson' => $_POST['theorical_lesson']
@@ -198,8 +198,51 @@ function get_category()
 
 function get_lesson_number()
 {
-    return count((new Students($_SESSION['token']))->get_student_lessons_by_id($_GET['id'])['data']->data);
+    // get the total lesson time
+    $lessons = (new Students($_SESSION['token']))->get_student_lessons_by_id($_GET['id']);
 
+    // get the total lesson duration
+    $lesson_total_time = array();
+    foreach ($lessons['data']->data as $lesson) {
+        $lesson_total_time[] = substr($lesson->duration, 0, -3);
+    }
+    $total_time = calculate_total_time($lesson_total_time);
+
+    // get the lesson time in hundredth
+    $minutes = (int)substr($total_time, -2);
+    switch ($minutes) {
+        case 15:
+            $total_time = substr($total_time, 0, -3) . ",25";
+            break;
+        case 30:
+            $total_time = substr($total_time, 0, -3) . ",50";
+            break;
+        case 45:
+            $total_time = substr($total_time, 0, -3) . ",75";
+            break;
+        default:
+            $total_time = substr($total_time, 0, -3) . ",00";
+            break;
+    }
+
+    return $total_time;
+}
+
+function calculate_total_time($times)
+{
+    $minutes = 0; //declare minutes either it gives Notice: Undefined variable
+    // loop throught all the times
+    foreach ($times as $time) {
+        list($hour, $minute) = explode(':', $time);
+        $minutes += $hour * 60;
+        $minutes += $minute;
+    }
+
+    $hours = floor($minutes / 60);
+    $minutes -= $hours * 60;
+
+    // returns the time already formatted
+    return sprintf('%02d:%02d', $hours, $minutes);
 }
 
 require_once __DIR__ . "/view/v_invoice_create.php";

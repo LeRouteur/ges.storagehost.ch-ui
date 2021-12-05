@@ -80,7 +80,6 @@
                                         </button>
                                     </div>
                                 </div>
-
                                 <div class='row'>
                                     <div class='form-group col-md-6 col-sm-12'>
                                         <label for="sln">ID de l'élève :</label>
@@ -103,7 +102,7 @@
 
                                     <div class='form-group col-md-2 col-sm-12'>
                                         <label for="last_name">Leçons :</label>
-                                        <input id='last_name' type='number' class='form-control' name='lesson' min="0"
+                                        <input id='last_name' type='text' class='form-control' name='lesson' min="0"
                                                value="<?php echo isset($_POST['lesson']) ? $_POST['lesson'] : get_lesson_number() ?>"
                                                required>
                                     </div>

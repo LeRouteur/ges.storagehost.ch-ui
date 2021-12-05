@@ -45,6 +45,8 @@ if (!empty($_GET)) {
                 <th scope='col'>Date</th>
                 <th scope='col'>Durée</th>
                 <th scope='col'>Commentaire</th>
+                <th scope='col'>Payé</th>
+                <th scope='col'>Payé via</th>
             </tr>
             </thead>
             <tbody>";
@@ -52,21 +54,36 @@ if (!empty($_GET)) {
         $lesson_total_time = array();
         foreach ($lessons['data']->data as $lesson) {
             $duration = substr($lesson->duration, 0, -3);
+            $paid = ($lesson->paid == 0) ? "Non" : "Oui";
+
+            $paid_by = "";
+            switch ($lesson->paid_by) {
+                case "bank":
+                    $paid_by = "Virement bancaire";
+                    break;
+                case "twint":
+                    $paid_by = "Twint";
+                    break;
+                case "cash":
+                    $paid_by = "Cash";
+                    break;
+            }
 
             // add the durations in an array
-            array_push($lesson_total_time, $duration);
+            $lesson_total_time[] = $duration;
 
             $result .= "<tr>
         <th scope='row'>" . date('d/m/Y', strtotime($lesson->date)) . "</th>
         <td>" . $duration . "</td>
         <td>" . $lesson->student_comment . "</td>
+        <td>" . $paid  . "</td>
+        <td>" . $paid_by . "</td>
     </tr>";
         }
 
         $result .= "
         <th><strong>Total :</strong></th>
         <td><strong>" . calculate_total_time($lesson_total_time) . "</strong></td>
-        <td></td>
 </tbody>
 </table>
 </div>

@@ -241,7 +241,8 @@ function get_lesson_status()
     }
 }
 
-function get_send_by_mail_button() {
+function get_send_by_mail_button()
+{
     if (isset($_GET['link'])) {
         return "<button class='btn btn-info float-right mr-2' type='button' onclick='sendDetailSheetByEmail(\"" . base64_encode(get_email_string()) . "\")'>Envoyer le PDF par email</button>";
     }
@@ -270,32 +271,98 @@ function get_lessons($lessons)
             $result .= "<p>Il n'y a pas de leçons pour cet élève.</p>";
         }
     } else {
+        $i = 0;
         foreach ($lessons['data']->data as $lesson) {
             $lesson->date = date('Y-m-d', strtotime($lesson->date));
             $result .= "<div class='row mt-3'>
-                        <input type='hidden' name='student_id' value='" . $student_id . "'>
-                        <input type='hidden' class='form-control' name='lesson_id[]' value='" . $lesson->lesson_id . "' required>
-                        <div class='col-md-3 col-sm-12 mb-2'>
-                            <label>Date :</label>
-                            <input type='date' class='form-control' name='date[]' value='" . $lesson->date . "' required>
-                        </div>
-                        <div class='col-md-3 col-sm-12 mb-2'>
-                            <label>Durée :</label>
-                            <input type='time' list='lesson_duration' class='form-control' name='lesson_duration[]' value='" . $lesson->duration . "' required>
-                        </div>
-                        <div class='col-md-3 col-sm-12 mb-2'>
-                            <label>Commentaires élève :</label>                        
-                            <textarea class='form-control' name='student_comment[]' placeholder='Commentaire...'>" . $lesson->student_comment . "</textarea>
-                        </div>
-                        <div class='col-md-3 col-sm-12'>
-                            <label>Commentaires moniteur :</label>                        
-                            <textarea class='form-control' name='teacher_comment[]' placeholder='Commentaire...'>" . $lesson->teacher_comment . "</textarea>
-                        </div>
-                    </div>";
+                            <input type='hidden' name='student_id' value='" . $student_id . "'>
+                            <input type='hidden' class='form-control' name='lesson_id[]' value='" . $lesson->lesson_id . "' required>
+                            <div class='form-group col-md-3 col-sm-12 mb-2'>
+                                <label>Date :</label>
+                                <input type='date' class='form-control' name='date[]' value='" . $lesson->date . "' required>
+                            </div>
+                            <div class='form-group col-md-2 col-sm-12 mb-2'>
+                                <label>Durée :</label>
+                                <input type='time' list='lesson_duration' class='form-control' name='lesson_duration[]' value='" . $lesson->duration . "' required>
+                            </div>
+                            <div class='form-group col-md-2 col-sm-12 mb-2'>
+                                <label>Comm. pr. élève :</label>                        
+                                <textarea class='form-control' name='student_comment[]' placeholder='Commentaire...'>" . $lesson->student_comment . "</textarea>
+                            </div>
+                            <div class='form-group col-md-2 col-sm-12'>
+                                <label>Comm. moniteur :</label>                        
+                                <textarea class='form-control' name='teacher_comment[]' placeholder='Commentaire...'>" . $lesson->teacher_comment . "</textarea>
+                            </div>
+                            <div class='form-group col-md-1 col-sm-12'>
+                                <label>Payé :</label>
+                                <div class='form-check'>
+                                    <input class='form-check-input' type='radio' name='paid" . $i . "' id='paid" . $i . "' value=1>
+                                    <label class='form-check-label' for='paid" . $i . "'>
+                                        Oui
+                                    </label>
+                                </div>
+                                <div class='form-check'>
+                                    <input class='form-check-input' type='radio' name='paid" . $i . "' id='unpaid" . $i . "' value=0>
+                                    <label class='form-check-label' for='unpaid" . $i . "'>
+                                        Non
+                                    </label>
+                                </div>                           
+                            </div>
+                            <div class='form-group col-md-2 col-sm-12'>
+                            <label>Payé via :</label>
+                                <select class='form-control' id='paid_by" . $i . "' name='paid_by[]' required>
+                                    <option selected>Sélectionner le moyen de paiement</option>
+                                    <option value='bank'>Virement bancaire</option>
+                                    <option value='twint'>Twint</option>
+                                    <option value='cash'>Cash</option>
+                                </select>
+                            </div>
+                    </div>" . get_payment_status($lesson->paid, $i) . "
+            " . get_payment_method($lesson->paid_by, $i);
+            $i++;
         }
     }
 
     $result .= "</div>";
+    return $result;
+}
+
+function get_payment_status($payment_status, $increment): string
+{
+    $result = "<script>$(document).ready(function() {";
+
+    // add checked property to each category holder using jquery
+    switch ((int)$payment_status) {
+        case 0:
+            $result .= "$('#unpaid" . $increment . "').prop('checked', true);";
+            break;
+        case 1:
+            $result .= "$('#paid" . $increment . "').prop('checked', true);";
+            break;
+    }
+
+    $result .= "});</script>";
+    return $result;
+}
+
+function get_payment_method($payment_method, $increment)
+{
+    $result = "<script>$(document).ready(function () {";
+
+    switch ($payment_method) {
+        case "bank":
+            $result .= "$('#paid_by" . $increment . " option[value=bank]').prop('selected', true);";
+            break;
+        case "twint":
+            $result .= "$('#paid_by" . $increment . " option[value=twint]').prop('selected', true);";
+            break;
+        case "cash":
+            $result .= "$('#paid_by" . $increment . " option[value=cash]').prop('selected', true);";
+            break;
+    }
+
+    $result .= "});</script>";
+
     return $result;
 }
 

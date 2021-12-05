@@ -176,7 +176,7 @@ function show_invoice_details()
 
             <div class='form-group col-md-4 col-sm-12'>
                 <label>Total (CHF) :</label>
-                <input type='number' class='form-control' name='total' value='" . $data['total'] . "' required>
+                <input type='text' class='form-control' name='total' value='" . $data['total'] . "' required>
             </div>
             </div>
             </form>
@@ -247,6 +247,9 @@ function get_message()
 }
 
 if ($data['category'] == "THEORY") $data['category'] = "Théorie";
+if (str_contains($data['lesson_nbr'], ".")) $data['lesson_nbr'] = str_replace(".", ",", $data['lesson_nbr']);
+if (str_contains($data['lesson_total'], ".")) $data['lesson_total'] = str_replace(".", ",", $data['lesson_total']);
+if (str_contains($data['total'], ".")) $data['total'] = str_replace(".", ",", $data['total']);
 
 $html = "<!DOCTYPE html>
 <html lang='en'>
